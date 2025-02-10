@@ -59,7 +59,7 @@ public class ModuleKillAura extends CheatModule {
 
     public ValueMode rotMode = new ValueMode("Rotation Mode", new String[] { "Normal", "MegaWalls" }, "Normal");
 
-    public static ValueMode abMode = new ValueMode("AutoBlock mode", new String[] { "Grim", "Interact", "Fake", "Off" },
+    public static ValueMode abMode = new ValueMode("AutoBlock mode", new String[] { "Interact", "Fake", "Off" },
             "Interact");
 
     public ValueInt cps = new ValueInt("CPS", 13, 1, 20);
@@ -383,7 +383,7 @@ public class ModuleKillAura extends CheatModule {
 
         if (event.isPre()) {
 
-            if ((shouldBlock() && !isBlocking) || (abMode.is("Grim") && shouldBlock())) {
+            if (shouldBlock() && !isBlocking) {
                 doBlock();
             }
 
@@ -401,21 +401,7 @@ public class ModuleKillAura extends CheatModule {
                 doBlock();
             }
 
-            if (isBlocking && abMode.is("Grim") && blocked && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
-                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(
-                        C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-                blocked = false;
-            }
-
         } else {
-
-            if (isBlocking && abMode.is("Grim") && !blocked && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
-                mc.getNetHandler().getNetworkManager()
-                        .sendPacket(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
-
-                    blocked = true;
-            }
-
             if (abMode.is("Interact") && !shouldBlock() && isBlocking) {
                 stopBlocking(true);
             }
@@ -438,11 +424,6 @@ public class ModuleKillAura extends CheatModule {
     void stopBlocking(boolean render) {
         if (mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemSword && renderBlocking) {
             switch (abMode.getValue()) {
-                case "Grim":
-                    mc.gameSettings.keyBindUseItem.pressed = false;
-                    mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(
-                            C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-                    break;
                 case "Fake":
                     break;
                 case "Interact":
@@ -472,8 +453,6 @@ public class ModuleKillAura extends CheatModule {
                     mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 255,
                             mc.thePlayer.inventory.getCurrentItem(), 0.0F, 0.0F, 0.0F));
                 case "Fake":
-                    break;
-                case "Grim":
                     break;
             }
             if (!abMode.is("Fake"))
