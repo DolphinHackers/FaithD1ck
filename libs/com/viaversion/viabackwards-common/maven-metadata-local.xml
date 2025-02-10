@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.viaversion</groupId>
+  <artifactId>viabackwards-common</artifactId>
+  <versioning>
+    <versions>
+      <version>4.9.2-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20250210201747</lastUpdated>
+  </versioning>
+</metadata>

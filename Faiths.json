@@ -27,16 +27,6 @@
   "id": "Faiths",
   "libraries": [
     {
-      "name": "novoline:vecmath:1.5.2",
-      "downloads": {
-        "artifact": {
-          "url": "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
-          "sha1": "fd17bc3e67f909573dfc039d8e2abecf407c4e27",
-          "size": 169541
-        }
-      }
-    },
-    {
       "name": "cn.hutool:hutool-core:5.8.25",
       "downloads": {
         "artifact": {

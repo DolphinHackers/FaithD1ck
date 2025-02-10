@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>com.viaversion</groupId>
+  <artifactId>ViaVersion</artifactId>
+  <versioning>
+    <lastUpdated>20250210201747</lastUpdated>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>4.9.3-SNAPSHOT</value>
+        <updated>20250210201747</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>4.9.3-SNAPSHOT</value>
+        <updated>20250210201747</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+  <version>4.9.3-SNAPSHOT</version>
+</metadata>
