@@ -1,5 +1,5 @@
 # FaithD1ck
-Faiths Client but fxxking opensource
+* Faiths Client but fxxking opensource, used for Bl0cksMC
 ## How 2 run? (IntelliJ IDEA)
 1. Add a new application launch configuration
 2. Set the main class to `net.minecraft.client.main.Main`
