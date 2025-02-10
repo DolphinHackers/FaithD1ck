@@ -24,19 +24,10 @@ public class ModuleAntiVoid extends CheatModule {
     private final ValueBoolean onlyVoid = new ValueBoolean("OnlyVoid", false);
     public double[] lastGroundPos = new double[3];
     public static MSTimer timer = new MSTimer();
-    public static ArrayList<Packet> packets = new ArrayList<>();
 
     public ModuleAntiVoid() {
         super("AntiVoid", Category.PLAYER);
     }
-
-    private final Handler<WorldEvent> worldEventHandler = event -> {
-        if (!packets.isEmpty()) {
-            for (Packet packet : packets)
-                mc.getNetHandler().sendPacketNoEvent(packet);
-            packets.clear();
-        }
-    };
 
     private final Handler<PacketEvent> packetEventHandler = e -> {
         if (mc.thePlayer == null || mc.theWorld == null) return;

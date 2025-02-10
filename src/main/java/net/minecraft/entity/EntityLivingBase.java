@@ -5,7 +5,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import sb.faithd1ck.FaithD1ck;
 import sb.faithd1ck.event.impl.JumpEvent;
-import sb.faithd1ck.module.movement.ModuleNoFluid;
 import sb.faithd1ck.module.render.ModuleAnimation;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1595,8 +1594,8 @@ public abstract class EntityLivingBase extends Entity
      */
     public void moveEntityWithHeading(float strafe, float forward) {
         if (this.isServerWorld()) {
-            if (!(this.isInWater() && !ModuleNoFluid.shouldCancelWater) || this instanceof EntityPlayer && ((EntityPlayer) this).capabilities.isFlying) {
-                if (!(this.isInLava() && !ModuleNoFluid.shouldCancelWater) || this instanceof EntityPlayer && ((EntityPlayer) this).capabilities.isFlying) {
+            if (!this.isInWater() || this instanceof EntityPlayer && ((EntityPlayer) this).capabilities.isFlying) {
+                if (!this.isInLava() || this instanceof EntityPlayer && ((EntityPlayer) this).capabilities.isFlying) {
                     float f4 = 0.91F;
 
                     if (this.onGround) {

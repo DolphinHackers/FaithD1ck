@@ -1,7 +1,6 @@
 package sb.faithd1ck.utils.render;
 
 import sb.faithd1ck.FaithD1ck;
-import sb.faithd1ck.module.combat.ModuleBackTrack;
 import sb.faithd1ck.module.render.ModuleHUD;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -689,7 +688,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
     }
 
-    public static void drawEntityBox(final Entity entity, final Color color, final boolean backTrack) {
+    public static void drawEntityBox(final Entity entity, final Color color) {
         final RenderManager renderManager = mc.getRenderManager();
         final Timer timer = mc.timer;
 
@@ -714,17 +713,6 @@ public class RenderUtils {
                 entityBox.maxY - entity.posY + y + 0.15D,
                 entityBox.maxZ - entity.posZ + z + 0.05D
         );
-        if (backTrack && entity instanceof EntityPlayer) {
-            entityBox = ModuleBackTrack.getClosedBBox((EntityPlayer) entity);
-            axisAlignedBB = new AxisAlignedBB(
-                    entityBox.minX - renderManager.renderPosX - 0.05D,
-                    entityBox.minY - renderManager.renderPosY,
-                    entityBox.minZ - renderManager.renderPosZ - 0.05D,
-                    entityBox.maxX - renderManager.renderPosX + 0.05D,
-                    entityBox.maxY - renderManager.renderPosY + 0.15D,
-                    entityBox.maxZ - renderManager.renderPosZ + 0.05D
-            );
-        }
 
         glColor(color.getRed(), color.getGreen(), color.getBlue(), 95);
         drawFilledBox(axisAlignedBB);

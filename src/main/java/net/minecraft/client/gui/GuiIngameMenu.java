@@ -1,7 +1,6 @@
 package net.minecraft.client.gui;
 
 import sb.faithd1ck.FaithD1ck;
-import sb.faithd1ck.module.player.ModuleAutoBan;
 import sb.faithd1ck.module.player.ModuleBlink;
 import sb.faithd1ck.module.world.ModuleScaffold;
 import net.minecraft.client.gui.achievement.GuiAchievements;
@@ -62,7 +61,6 @@ public class GuiIngameMenu extends GuiScreen
                 this.mc.loadWorld((WorldClient)null);
                 FaithD1ck.moduleManager.getModule(ModuleBlink.class).setState(false);
                 FaithD1ck.moduleManager.getModule(ModuleScaffold.class).setState(false);
-                FaithD1ck.moduleManager.getModule(ModuleAutoBan.class).setState(false);
 
                 if (flag)
                 {

@@ -1659,32 +1659,19 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     }
 
     private long runTicks() throws IOException {
-        if (!ModuleDisabler.getGrimPost()) {
-            synchronized (this.scheduledTasks) {
-                while (!this.scheduledTasks.isEmpty()) {
-                    Util.runTask((FutureTask) this.scheduledTasks.poll(), logger);
-                }
+        synchronized (this.scheduledTasks) {
+            while (!this.scheduledTasks.isEmpty()) {
+                Util.runTask((FutureTask) this.scheduledTasks.poll(), logger);
             }
         }
+
 
         this.mcProfiler.endSection();
         long l = System.nanoTime();
         this.mcProfiler.startSection("tick");
 
         for (int j = 0; j < this.timer.elapsedTicks; ++j) {
-            if (ModuleDisabler.getGrimPost()) {
-                lastTickSentC03 = false;
-                this.runTick();
-                if (!lastTickSentC03) {
-                    synchronized (this.scheduledTasks) {
-                        while (!this.scheduledTasks.isEmpty()) {
-                            Util.runTask((FutureTask) this.scheduledTasks.poll(), logger);
-                        }
-                    }
-                }
-            } else {
-                this.runTick();
-            }
+            this.runTick();
         }
         return l;
     }

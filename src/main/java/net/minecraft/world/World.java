@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import sb.faithd1ck.FaithD1ck;
 import sb.faithd1ck.event.impl.EntityJoinWorldEvent;
-import sb.faithd1ck.module.movement.ModuleNoFluid;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -2088,13 +2087,7 @@ public abstract class World implements IBlockAccess
                         blockpos$mutableblockpos.set(k1, l1, i2);
                         IBlockState iblockstate = this.getBlockState(blockpos$mutableblockpos);
                         Block block = iblockstate.getBlock();
-
-                        if(ModuleNoFluid.shouldCancelWater && (block == Blocks.water || block == Blocks.flowing_water)){
-                            continue;
-                        }
-                        if(ModuleNoFluid.shouldCancelWater && (block == Blocks.lava || block == Blocks.flowing_lava)){
-                            continue;
-                        }
+                        
                         if (block.getMaterial() == materialIn)
                         {
                             double d0 = (double)((float)(l1 + 1) - BlockLiquid.getLiquidHeightPercent(((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue()));

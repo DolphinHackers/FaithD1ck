@@ -238,22 +238,20 @@ public class EntityPlayerSP extends AbstractClientPlayer
             boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
             boolean flag3 = d3 != 0.0D || d4 != 0.0D;
 
-                if (this.ridingEntity == null) {
-                    if (flag2 && flag3) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(eventMotion.getX(), eventMotion.getY(), eventMotion.getZ(), eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
-                    } else if (flag2) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(eventMotion.getX(), eventMotion.getY(), eventMotion.getZ(), eventMotion.isGround()));
-                    } else if (flag3) {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
-                    } else {
-                        this.sendQueue.addToSendQueue(new C03PacketPlayer(eventMotion.isGround()));
-                    }
+            if (this.ridingEntity == null) {
+                if (flag2 && flag3) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(eventMotion.getX(), eventMotion.getY(), eventMotion.getZ(), eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
+                } else if (flag2) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(eventMotion.getX(), eventMotion.getY(), eventMotion.getZ(), eventMotion.isGround()));
+                } else if (flag3) {
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
                 } else {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
-                    flag2 = false;
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer(eventMotion.isGround()));
                 }
-
-            this.processPackets();
+            } else {
+                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, eventMotion.getYaw(), eventMotion.getPitch(), eventMotion.isGround()));
+                flag2 = false;
+            }
 
             if (ViaLoadingBase.getInstance().getTargetVersion().getVersion() <= 47) {
                 ++this.positionUpdateTicks;
@@ -964,19 +962,6 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     public Slot getSlotFromPlayerContainer(int slot) {
         return this.inventoryContainer.getSlot(slot);
-    }
-
-    private void processPackets() {
-        if (ModuleDisabler.getGrimPost()) {
-            mc.lastTickSentC03 = true;
-            while (!mc.scheduledTasks.isEmpty() && ModuleDisabler.shouldProcess()) {
-                try {
-                    Util.runTask(mc.scheduledTasks.poll(), Minecraft.logger);
-                } catch (ThreadQuickExitException ignored) {
-
-                }
-            }
-        }
     }
 
     public void drop(int slot) {

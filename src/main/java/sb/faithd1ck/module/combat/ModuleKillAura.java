@@ -10,7 +10,6 @@ import sb.faithd1ck.event.impl.UpdateEvent;
 import sb.faithd1ck.module.Category;
 import sb.faithd1ck.module.CheatModule;
 import sb.faithd1ck.module.player.ModuleBlink;
-import sb.faithd1ck.module.render.ModuleFarmHunterESP;
 import sb.faithd1ck.module.world.ModuleBedBreaker;
 import sb.faithd1ck.module.world.ModuleScaffold;
 import sb.faithd1ck.module.world.ModuleTeams;
@@ -42,7 +41,6 @@ import net.minecraft.util.*;
 import net.viamcp.fixes.AttackOrder;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
-import sb.faithd1ck.value.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -83,8 +81,7 @@ public class ModuleKillAura extends CheatModule {
             new Pair("Invisibles", true),
             new Pair("Mobs", false),
             new Pair("Players", true),
-            new Pair("Animals", false),
-            new Pair("FakeAnimals", false));
+            new Pair("Animals", false));
 
     private final TimerUtil switchTimer = new TimerUtil();
     private final TimerUtil attackTimer = new TimerUtil();
@@ -294,18 +291,10 @@ public class ModuleKillAura extends CheatModule {
 
     private float[] getRot() {
         float[] rot;
-        if (target instanceof EntityPlayer) {
-            rot = RotationUtils.getHVHRotation(ModuleBackTrack.getClosedBBox((EntityPlayer) target), range.getValue());
-        } else {
-            rot = RotationUtils.getHVHRotation(target.boundingBox, range.getValue());
-        }
+        rot = RotationUtils.getHVHRotation(target.boundingBox, range.getValue());
         switch (rotMode.getValue()) {
             case "Normal":
-                if (target instanceof EntityPlayer) {
-                    rot = RotationUtils.getAngles(ModuleBackTrack.getClosedBBox((EntityPlayer) target));
-                } else {
-                    rot = RotationUtils.getAngles(target.boundingBox);
-                }
+                rot = RotationUtils.getAngles(target.boundingBox);
                 break;
             case "MegaWalls":
                 rotations = getRotation((EntityLivingBase) target);
@@ -374,10 +363,6 @@ public class ModuleKillAura extends CheatModule {
     }
 
     public static float getEntityRange(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return mc.thePlayer.getClosestDistanceToBBox(ModuleBackTrack.getClosedBBox((EntityPlayer) entity));
-        }
-
         return mc.thePlayer.getDistanceToEntity(target);
     }
 
@@ -502,11 +487,7 @@ public class ModuleKillAura extends CheatModule {
         return Minecraft.getMinecraft().theWorld.loadedEntityList.stream()
                 .filter(e -> {
                     double distance;
-                    if (e instanceof EntityPlayer) {
-                        distance = mc.thePlayer.getClosestDistanceToBBox(ModuleBackTrack.getClosedBBox((EntityPlayer) e));
-                    } else {
-                        distance = mc.thePlayer.getClosestDistanceToEntity(e);
-                    }
+                    distance = mc.thePlayer.getClosestDistanceToEntity(e);
                     return distance <= value && isValid(e, value);
                 })
                 .collect(Collectors.toList());
@@ -529,8 +510,6 @@ public class ModuleKillAura extends CheatModule {
                 && targetsvalue.isEnabled("Animals"))
             return true;
         if (entity instanceof EntityAnimal && targetsvalue.isEnabled("Animals"))
-            return true;
-        if (FaithD1ck.moduleManager.getModule(ModuleFarmHunterESP.class).getState() && (ModuleFarmHunterESP.entities.contains(entity) || ModuleFarmHunterESP.mentities.contains(entity)) && targetsvalue.isEnabled("FakeAnimals"))
             return true;
         if (entity.getEntityId() == -8 || entity.getEntityId() == -1337) {
             return false;
@@ -605,7 +584,7 @@ public class ModuleKillAura extends CheatModule {
 
     private Handler<Render3DEvent> render3DEventHandler = event -> {
         if (target != null) {
-            RenderUtils.drawEntityBox(target, new Color(255, 43, 28), true);
+            RenderUtils.drawEntityBox(target, new Color(255, 43, 28));
         }
     };
 }

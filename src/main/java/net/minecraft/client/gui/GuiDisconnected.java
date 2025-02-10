@@ -1,7 +1,6 @@
 package net.minecraft.client.gui;
 
 import sb.faithd1ck.FaithD1ck;
-import sb.faithd1ck.module.player.ModuleAutoBan;
 import sb.faithd1ck.module.player.ModuleBlink;
 import sb.faithd1ck.module.world.ModuleScaffold;
 import net.minecraft.client.resources.I18n;
@@ -41,7 +40,6 @@ public class GuiDisconnected extends GuiScreen
     {
         FaithD1ck.moduleManager.getModule(ModuleBlink.class).setState(false);
         FaithD1ck.moduleManager.getModule(ModuleScaffold.class).setState(false);
-        FaithD1ck.moduleManager.getModule(ModuleAutoBan.class).setState(false);
         this.buttonList.clear();
         this.multilineMessage = this.fontRendererObj.listFormattedStringToWidth(this.message.getFormattedText(), this.width - 50);
         this.field_175353_i = this.multilineMessage.size() * this.fontRendererObj.FONT_HEIGHT;

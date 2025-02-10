@@ -17,6 +17,11 @@ public class ModuleStep extends CheatModule {
     }
     public boolean stepped = false;
 
+    @Override
+    public String getSuffix() {
+        return "BlocksMC";
+    }
+
     public boolean couldStep() {
         EntityPlayerSP player = mc.thePlayer;
         if (player == null || player.isSneaking() || mc.gameSettings.keyBindJump.isKeyDown()) {

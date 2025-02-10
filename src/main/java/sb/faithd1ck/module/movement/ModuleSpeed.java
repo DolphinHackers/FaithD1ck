@@ -28,17 +28,13 @@ public class ModuleSpeed extends CheatModule {
         super("Speed",Category.MOVEMENT);
     }
 
-    private ValueMode mode = new ValueMode("Mode", new String[]{"BlocksMC", "EntityBoost"}, "BlocksMC");
+    private ValueMode mode = new ValueMode("Mode", new String[]{"BlocksMC"}, "BlocksMC");
     ValueBoolean safeY = new ValueBoolean("SafeY",true).visible(() -> mode.is("BlocksMC"));
     ValueBoolean faststop = new ValueBoolean("FastStop",true).visible(() -> mode.is("BlocksMC"));
     ValueBoolean lowhop = new ValueBoolean("Lowhop",true).visible(() -> mode.is("BlocksMC"));
     ValueBoolean fullStrafe = new ValueBoolean("FullStrafe",false).visible(() -> mode.is("BlocksMC"));
     ValueBoolean dmgBoost = new ValueBoolean("DamageBoost",true).visible(() -> mode.is("BlocksMC"));
     ValueBoolean dmgLowhop = new ValueBoolean("DamageLowhop",false).visible(() -> mode.is("BlocksMC"));
-    ValueFloat speed = new ValueFloat("Speed", 0.08f, 0f, 0.1f).visible(() -> mode.is("EntityBoost"));
-    ValueBoolean follow = new ValueBoolean("FollowTargetOnSpace",true).visible(() -> mode.is("EntityBoost"));
-    ValueBoolean mcount = new ValueBoolean("MultiCount",true).visible(() -> mode.is("EntityBoost"));
-    ValueBoolean antivoid = new ValueBoolean("AntiVoid",true).visible(() -> mode.is("EntityBoost"));
     private int offGroundticks;
     @Override
     public String getSuffix() {
@@ -103,101 +99,6 @@ public class ModuleSpeed extends CheatModule {
                     }
                 }
             }
-        } else if (mode.is("entityboost")) {
-            if (event.isPre()) {
-                entityBoost();
-            }
         }
     };
-
-    private void entityBoost() {
-        EntityPlayerSP thePlayer = mc.thePlayer;
-        AxisAlignedBB playerBox = mc.thePlayer.boundingBox.expand(1.0, 1.0, 1.0);
-        int c = 0;
-        for (Entity entity : mc.theWorld.loadedEntityList) {
-            if (entity instanceof EntityLivingBase && !(entity instanceof EntityArmorStand) && entity.getEntityId() != mc.thePlayer.getEntityId() && playerBox.intersectsWith(entity.boundingBox) && entity.getEntityId() != -8 && entity.getEntityId() != -1337 && !FaithD1ck.moduleManager.getModule(ModuleBlink.class).getState()) {
-                c += 1;
-                if (mcount.getValue()) {
-                    break;
-                }
-            }
-        }
-        if (c > 0) {
-            double strafeOffset = c * speed.getValue();
-            double speedOffset = c * speed.getValue();
-
-            if (thePlayer.movementInput.moveForward == 0 && thePlayer.movementInput.moveStrafe == 0) {
-                if (thePlayer.motionX > strafeOffset) {
-                    thePlayer.motionX -= strafeOffset;
-                } else if (thePlayer.motionX < -strafeOffset) {
-                    thePlayer.motionX += strafeOffset;
-                } else {
-                    thePlayer.motionX = 0.0;
-                }
-                if (thePlayer.motionZ > strafeOffset) {
-                    thePlayer.motionZ -= strafeOffset;
-                } else if (thePlayer.motionZ < -strafeOffset) {
-                    thePlayer.motionZ += strafeOffset;
-                } else {
-                    thePlayer.motionZ = 0.0;
-                }
-
-            }
-            float yaw = getYaw();
-
-            double mx = -Math.sin(Math.toRadians(yaw));
-
-            if (mx < 0.0) {
-                if (thePlayer.motionX > strafeOffset) {
-                    thePlayer.motionX -= strafeOffset;
-                } else
-                    thePlayer.motionX += mx * speedOffset;
-
-            } else if (mx > 0.0) {
-                if (thePlayer.motionX < -strafeOffset) {
-                    thePlayer.motionX += strafeOffset;
-                } else
-                    thePlayer.motionX += mx * speedOffset;
-
-            }
-
-            double mz = Math.cos(Math.toRadians(yaw));
-            if (mz < 0.0) {
-                if (thePlayer.motionZ > strafeOffset) {
-                    thePlayer.motionZ -= strafeOffset;
-                } else
-                    thePlayer.motionZ += mz * speedOffset;
-
-            } else if (mz > 0.0) {
-                if (thePlayer.motionZ < -strafeOffset) {
-                    thePlayer.motionZ += strafeOffset;
-                } else
-                    thePlayer.motionZ += mz * speedOffset;
-            }
-        }
-    }
-    private float getYaw() {
-        if(follow.getValue() && mc.gameSettings.keyBindJump.pressed){
-            float yaw = FaithD1ck.INSTANCE.getRotationManager().rotation.getX();
-            if (antivoid.getValue() && isVoid(yaw)) {
-                yaw += 180.0f;
-            }
-            return yaw;
-        }else{
-            return mc.thePlayer.rotationYaw;
-        }
-    }
-
-    private boolean isVoid(float yaw) {
-        double mx = -Math.sin(Math.toRadians(yaw));
-        double mz = Math.cos(Math.toRadians(yaw));
-        double posX = mc.thePlayer.posX + (1.5 * mx);
-        double posZ = mc.thePlayer.posZ + (1.5 * mz);
-        for (int i = 0; i < 16; i++) {
-            if (!mc.theWorld.isAirBlock(new BlockPos(posX, mc.thePlayer.posY - i, posZ))) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

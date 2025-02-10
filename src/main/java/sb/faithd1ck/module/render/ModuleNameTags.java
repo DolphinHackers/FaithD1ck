@@ -8,7 +8,6 @@ import sb.faithd1ck.event.impl.RenderNameTagEvent;
 import sb.faithd1ck.module.Category;
 import sb.faithd1ck.module.CheatModule;
 import sb.faithd1ck.module.combat.ModuleAntiBot;
-import sb.faithd1ck.module.player.ModuleNotify;
 import sb.faithd1ck.module.player.ModuleStaffDetector;
 import sb.faithd1ck.module.world.ModuleTeams;
 import sb.faithd1ck.utils.render.RenderUtils;
@@ -92,15 +91,7 @@ public class ModuleNameTags extends CheatModule {
                 GL11.glScalef(2F / scaledResolution.getScaleFactor(), 2F / scaledResolution.getScaleFactor(), 2F / scaledResolution.getScaleFactor());
                 final FontRenderer fontRenderer = mc.fontRendererObj;
                 final boolean teamMate = ModuleTeams.isSameTeam(player);
-//                final boolean friend = Client.INSTANCE.getFriendManager().isFriend(player);
-//                final boolean target = Client.INSTANCE.getEnemyManager().isTarget(player);
-                final boolean godAxe = ModuleNotify.isHeldGodAxe(player);
-                final boolean kbBall = ModuleNotify.isHeldKBBall(player);
-                final boolean gapple = ModuleNotify.isHeldEnchantedGApple(player);
                 String tags = "";
-                tags += (godAxe ? "§c(GodAxe)§r " : "") +
-                        (kbBall ? "§c(KBBall)§r " : "") +
-                        (gapple ? "§c(Enchanted GApple)§r " : "");
                 if (FaithD1ck.moduleManager.getModule(ModuleStaffDetector.class).getState() && ModuleStaffDetector.staff.contains(player.getName())) {
                     tags += "§c[STAFF]§r ";
                 }

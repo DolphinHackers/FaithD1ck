@@ -32,13 +32,12 @@ public class ModuleVelocity extends CheatModule {
         super("Velocity", Category.COMBAT);
     }
 
-    private ValueMode mode = new ValueMode("Mode", new String[]{"Cancel", "Watchdog","WatchDog2", "Grim", "Exploit"}, "Watchdog");
+    private ValueMode mode = new ValueMode("Mode", new String[]{"Cancel", "Watchdog","WatchDog2"}, "Watchdog");
     private ValueInt horizontal = new ValueInt("Horizontal", 0, 0, 100).visible(() -> mode.is("Cancel"));
     private ValueInt vertical = new ValueInt("Vertical", 0, 0, 100).visible(() -> mode.is("Cancel"));
-    private ValueBoolean explosion = new ValueBoolean("Explosion",true).visible(() -> !mode.is("Grim"));
+    private ValueBoolean explosion = new ValueBoolean("Explosion",true);
     private ValueBoolean lagbackCheck = new ValueBoolean("Lagback",true).visible(() -> mode.is("Watchdog"));
     private ValueBoolean debug = new ValueBoolean("Debug",false);
-    private ValueBoolean nousingitem = new ValueBoolean("NoConsumable",false).visible(() -> mode.is("Grim"));
     public boolean velocityInput;
     private boolean attacked;
     private double reduceXZ;
@@ -60,25 +59,6 @@ public class ModuleVelocity extends CheatModule {
             mc.thePlayer.motionZ = 0;
             lastTickStopMoving = false;
         }
-        if(mode.is("Grim")){
-                if (ViaLoadingBase.getInstance().getTargetVersion().getVersion() > 47) {
-                    if (velocityInput) {
-                        if (attacked) {
-                            mc.thePlayer.motionX *= reduceXZ;
-                            mc.thePlayer.motionZ *= reduceXZ;
-                            attacked = false;
-                        }
-                        if (mc.thePlayer.hurtTime == 0) {
-                            velocityInput = false;
-                        }
-                    }
-                } else {
-                    if (mc.thePlayer.hurtTime > 0 && mc.thePlayer.onGround) {
-                        mc.thePlayer.addVelocity(-1.3E-10, -1.3E-10, -1.3E-10);
-                        mc.thePlayer.setSprinting(false);
-                    }
-                }
-        }
     };
 
     private final Handler<PacketEvent> packetHandler = event -> {
@@ -86,11 +66,6 @@ public class ModuleVelocity extends CheatModule {
             final Packet<?> packet = event.getPacket();
 
             if (packet instanceof S12PacketEntityVelocity) {
-                if (mode.is("Exploit") && ((S12PacketEntityVelocity) packet).getEntityID() == mc.thePlayer.getEntityId()) {
-                    mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, mc.thePlayer.getPosition(), mc.thePlayer.getHorizontalFacing()));
-                    mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, mc.thePlayer.getPosition(), mc.thePlayer.getHorizontalFacing()));
-                    lastTickStopMoving = true;
-                }
                 if (mode.is("Cancel")) {
                     if (((S12PacketEntityVelocity) packet).getEntityID() == mc.thePlayer.getEntityId()) {
                         if (horizontal.getValue().equals(0) && vertical.getValue().equals(0)) {
@@ -125,51 +100,6 @@ public class ModuleVelocity extends CheatModule {
                             event.setCancelled(true);
                         }
                     }
-
-                if(mode.is("Grim")){
-                    if(nousingitem.getValue() && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemFood && mc.thePlayer.isUsingItem())return;
-
-                    if (((S12PacketEntityVelocity) packet).getEntityID() == mc.thePlayer.getEntityId()) {
-                        double x = ((S12PacketEntityVelocity) packet).getMotionX() / 8000D;
-                        double z = ((S12PacketEntityVelocity) packet).getMotionZ() / 8000D;
-                        float yaw = (float) Math.toDegrees(Math.atan2(z, x)) - 90;
-                        double speed = Math.sqrt(x * x + z * z);
-                        float yawDiff = Math.abs(FaithD1ck.INSTANCE.getRotationManager().getAngleDifference(yaw, mc.thePlayer.rotationYaw));
-                        double horizontalStrength = new Vector2d(((S12PacketEntityVelocity) packet).getMotionX(), ((S12PacketEntityVelocity) packet).getMotionZ()).length();
-                        if (horizontalStrength <= 1000) return;
-                        velocityInput = true;
-                        Entity entity = null;
-                        reduceXZ = 0;
-
-                        Entity target = ModuleKillAura.target;
-                        if (target != null && ModuleKillAura.shouldAttack()) {
-                            entity = ModuleKillAura.target;
-                        }
-
-                        boolean state = mc.thePlayer.serverSprintState;
-
-                        if (entity != null) {
-                            if (!state) {
-                                mc.skipTicks = 1;
-                                mc.getNetHandler().getNetworkManager().sendPacket(new C03PacketPlayer(mc.thePlayer.onGround));
-                                mc.getNetHandler().getNetworkManager().sendPacket(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.START_SPRINTING));
-                            }
-                            int count = 12;
-                            for (int i = 1; i <= count; i++) {
-                                AttackOrder.sendFixedAttack(mc.thePlayer, entity);
-                            }
-                            if (!state) {
-                                mc.getNetHandler().getNetworkManager().sendPacket(new C0BPacketEntityAction(mc.thePlayer, C0BPacketEntityAction.Action.STOP_SPRINTING));
-                            }
-                            attacked = true;
-                            reduceXZ = 0.07776;
-                            velocityYaw = yaw;
-                            if (debug.getValue()) {
-                                DebugUtil.log(true,"Yaw: " + Math.round(velocityYaw * 100) / 100f + ", Diff: " + Math.round(yawDiff * 100) / 100f + ", Speed: " + Math.round(speed * 100) / 100f);
-                            }
-                        }
-                    }
-                }
             }
 
             if (packet instanceof S27PacketExplosion) {

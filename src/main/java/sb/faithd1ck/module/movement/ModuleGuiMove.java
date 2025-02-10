@@ -22,14 +22,7 @@ import static sb.faithd1ck.utils.IMinecraft.mc;
 
 @SuppressWarnings("unused")
 public class ModuleGuiMove extends CheatModule {
-    public static ArrayList<Packet> packetListYes = new ArrayList<>();
-    public static ArrayList<Packet> packetPlayers = new ArrayList<>();
-    public static ArrayList<Packet> packetsQueue = new ArrayList<>();
-    public static boolean blinking = false;
-    public static boolean incontainer = false;
     ValueBoolean nomove = new ValueBoolean("NoMoveClick", false);
-    ValueBoolean safeblink = new ValueBoolean("SafeBlink", false);
-    ValueBoolean blink = new ValueBoolean("Blink", false);
 
     public ModuleGuiMove() {
         super("GuiMove", Category.MOVEMENT);
@@ -53,80 +46,6 @@ public class ModuleGuiMove extends CheatModule {
         if (mc.currentScreen instanceof GuiContainer || mc.currentScreen instanceof AstolfoGui || mc.currentScreen == null) {
             for (KeyBinding keyBinding : keyBindings) {
                 keyBinding.setPressed(Keyboard.isKeyDown(keyBinding.getKeyCode()));
-            }
-        }
-    };
-
-    private final Handler<UpdateEvent> updateEventHandler = event -> {
-        if (safeblink.getValue()) {
-            if ((mc.thePlayer.ticksExisted % 15) != 0 && incontainer)
-                blinking = true;
-            if ((mc.thePlayer.ticksExisted % 15) == 7 && !packetListYes.isEmpty()) {
-                packetListYes.forEach(mc.getNetHandler()::sendPacketNoEvent);
-                packetListYes.clear();
-            } else if ((mc.thePlayer.ticksExisted % 15) == 0 && !packetPlayers.isEmpty()) {
-                packetPlayers.forEach(mc.getNetHandler()::sendPacketNoEvent);
-                packetPlayers.clear();
-                blinking = false;
-            }
-        }
-    };
-
-    private final Handler<WorldEvent> worldEventHandler = event -> {
-        incontainer = false;
-        packetPlayers.clear();
-        packetListYes.clear();
-        blinking = false;
-    };
-
-    private final Handler<PacketEvent> packetEventHandler = event -> {
-        Packet packet = event.getPacket();
-        if (safeblink.getValue()) {
-            if ((packet instanceof C03PacketPlayer || packet instanceof C0FPacketConfirmTransaction) && blinking) {
-                packetPlayers.add(packet);
-                event.setCancelled(true);
-            }
-
-            if (incontainer) {
-                if (packet instanceof C0EPacketClickWindow && safeblink.getValue()) {
-                    packetListYes.add(packet);
-                    event.setCancelled(true);
-                }
-
-                if (packet instanceof C0DPacketCloseWindow && safeblink.getValue()) {
-                    packetListYes.add(packet);
-                    event.setCancelled(true);
-                }
-            }
-
-            if (packet instanceof S2DPacketOpenWindow || (packet instanceof C16PacketClientStatus && ((C16PacketClientStatus) packet).getStatus() == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT)) {
-                incontainer = true;
-                while (true) {
-                    Packet packet1 = packetPlayers.get(0);
-                    mc.getNetHandler().sendPacketNoEvent(packet1);
-                    if (packet1 instanceof C0DPacketCloseWindow) {
-                        break;
-                    }
-                }
-            }
-
-            if (packet instanceof S2EPacketCloseWindow || packet instanceof C0DPacketCloseWindow) {
-                incontainer = false;
-            }
-        }
-        if (blink.getValue()) {
-            if ((packet instanceof C16PacketClientStatus && ((C16PacketClientStatus) packet).getStatus() == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT) || event.getPacket() instanceof C0EPacketClickWindow) {
-                event.setCancelled(true);
-                packetsQueue.add(event.getPacket());
-            }
-            if (event.getPacket() instanceof C0DPacketCloseWindow) {
-                if (!packetsQueue.isEmpty()) {
-                    packetsQueue.forEach(mc.getNetHandler()::sendPacketNoEvent);
-                    packetsQueue.clear();
-                }
-            }
-            if (packet instanceof S2EPacketCloseWindow) {
-                packetsQueue.clear();
             }
         }
     };
